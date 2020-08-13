@@ -24,21 +24,19 @@ export default class PathfindingVisualizer extends Component {
     }
 
     handleMouseDown(row, col){
-        console.log("mouse is down at", row, col);
-        // const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
-        // this.setState({grid : newGrid, mouseIsPressed : true});
+        const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
+        this.setState({grid : newGrid, mouseIsPressed : true});
     }
 
     handleMouseEnter(row, col){
-        console.log("mouse is hovering here", row, col);
-        // if(!this.state.mouseIsPressed) return;
-        // const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
-        // this.setState({grid: newGrid});
+        if(!this.state.mouseIsPressed) return;
+        const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
+        this.setState({grid: newGrid});
     }
 
     handleMouseUp(){
         console.log("mouse is up");
-        // this.setState({mouseIsPressed: false});
+        this.setState({mouseIsPressed: false});
     }
 
     // animateDijkstra(visitedNodesInOrder, getNodesInShortestPathOrder){
@@ -54,11 +52,17 @@ export default class PathfindingVisualizer extends Component {
     //     this.animateDijkstra(visitedNodesInOrder);
     // }
 
+    clearBoard(grid){
+        const newGrid = getInitialGrid()
+        this.setState({grid : newGrid, mouseIsPressed : false})
+    }
+
     render(){
       const {grid, mouseIsPressed} = this.state;
 
       return (
           <>
+          <button onClick = {()=> this.clearBoard(this.grid)}></button>
             {/* <button onClick = {()=> this.visualizeDijkstra()}> Visualize Dijkstra's Algorithm </button> */}
             <div className = "grid">
                 {grid.map((row, rowIdx) => {
@@ -119,6 +123,10 @@ const createNode = (col, row) => {
 const getNewGridWithWallToggled = (grid, row, col) => {
     const newGrid = grid.slice();
     const node = newGrid[row][col];
+
+    if(node.isWall){
+        return grid
+    }
     const newNode = {
         ...node,
         isWall : !node.isWall,

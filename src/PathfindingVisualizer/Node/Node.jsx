@@ -24,7 +24,10 @@ export default class Node extends Component{
         ? 'node-finish' 
         : isStart 
         ? 'node-start'
-        : '';
+        : isWall ?
+        'wall'
+        :
+        ''
 
         return <div 
         className = {`node ${extraClassName}`}
