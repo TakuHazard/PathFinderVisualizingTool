@@ -42,3 +42,25 @@ function getUnVisitedNeighbors(node, grid){
 
     return neighbors;
 }
+
+function getAllNodes(grid){
+    const nodes = [];
+    for(const row of grid){
+        for(const node of row){
+            nodes.push(node);
+        }
+    }
+
+    return nodes;
+}
+
+export function getNodesInShortestPathOrder(finishNode){
+    const nodesInShortestPathOrder = [];
+    let currentNode = finishNode;
+    while(currentNode !== null){
+        nodesInShortestPathOrder.unshift(currentNode);
+        currentNode = currentNode.previousNode;
+    }
+
+    return nodesInShortestPathOrder;
+}
