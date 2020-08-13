@@ -14,5 +14,30 @@
 }
 
 .wall{
-    background-color: black;
+    background-color: #333;
+    animation-name : myanimation;
+    animation-duration : 0.5s;
+    animation-timing-function: ease-in;
+    animation-fill-mode: forwards;
+}
+
+@keyframes myanimation {
+    0% {
+        background-color : white;
+    }
+
+    25%{
+        background-color: #848484;
+    }
+
+    50%{
+        background-color: #300;
+    }
+
+    75%{
+        background-color: #300;
+    }
+    100% {
+        background-color : #333;  border-radius : 5%, 5%, 5%, 5%
+    }
 }
