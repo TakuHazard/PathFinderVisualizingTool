@@ -14,7 +14,9 @@ export default class PathfindingVisualizer extends Component {
         super(props);
         this.state = {
             grid : [],
-            mouseIsPressed : false
+            mouseIsPressed : false,
+            movingStart : false,
+            movingFinish : false,
         }
     }
 
@@ -24,18 +26,42 @@ export default class PathfindingVisualizer extends Component {
     }
 
     handleMouseDown(row, col){
-        const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
-        this.setState({grid : newGrid, mouseIsPressed : true});
+        const node = this.state.grid[row][col]
+        if(node.isStart){
+            this.setState({grid : this.state.grid, mouseIsPressed: false, movingStart : true, movingFinish: false})
+        } else if (node.isFinish){
+            this.setState({grid : this.state.grid, mouseIsPressed : false, movingStart : false, movingFinish : true })
+        }
+        
+        else {
+            const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
+            this.setState({grid : newGrid, mouseIsPressed : true});
+        }
+      
     }
 
     handleMouseEnter(row, col){
+        if(this.state.movingStart){
+            const newGrid = movePoint(row, col, this.state.grid, true);
+            this.setState({grid : newGrid});
+        } 
+
+        if(this.state.movingFinish){
+            const newGrid = movePoint(row, col, this.state.grid, false);
+            this.setState({grid : newGrid});
+        }
+
+        if(this.state.movingFinish){
+            
+        }
         if(!this.state.mouseIsPressed) return;
         const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
         this.setState({grid: newGrid});
     }
 
     handleMouseUp(){
-        console.log("mouse is up");
+        this.setState({movingStart: false});
+        this.setState({movingFinish : false});
         this.setState({mouseIsPressed: false});
     }
 
@@ -52,6 +78,7 @@ export default class PathfindingVisualizer extends Component {
     //     this.animateDijkstra(visitedNodesInOrder);
     // }
 
+    
     clearBoard(grid){
         const newGrid = getInitialGrid()
         this.setState({grid : newGrid, mouseIsPressed : false})
@@ -94,12 +121,65 @@ export default class PathfindingVisualizer extends Component {
     }
 }
 
+const movePoint = (newRow, newCol, currentGrid, isStart) => {
+    if(isStart){
+        const grid = currentGrid.slice();
+        for(let row = 0; row < 20; row++){
+            for(let col = 0; col < 50; col++){
+                const node = grid[row][col];
+                if(node.isStart){
+                    node.isStart = false;
+                }
+            }
+        }
+    
+        for(let row = 0; row < 20; row++){
+            for(let col = 0; col < 50; col++){
+                const node = grid[row][col];
+                if(row === newRow && col === newCol){
+                    node.isStart = true;
+                }
+            }
+        }
+        return grid;
+    }
+   else{
+    const grid = currentGrid.slice();
+    for(let row = 0; row < 20; row++){
+        for(let col = 0; col < 50; col++){
+            const node = grid[row][col];
+            if(node.isFinish){
+                node.isFinish = false;
+            }
+        }
+    }
+
+    for(let row = 0; row < 20; row++){
+        for(let col = 0; col < 50; col++){
+            const node = grid[row][col];
+            if(row === newRow && col === newCol){
+                node.isFinish = true;
+            }
+        }
+    }
+
+
+    return grid;
+   }
+}
+
 const getInitialGrid = () => {
     const grid = [];
     for(let row = 0; row < 20; row++){
         const currentRow = [];
         for(let col = 0; col < 50; col++){
-            currentRow.push(createNode(col, row));
+            const newNode = createNode(col, row)
+            if(row === START_NODE_ROW && col === START_NODE_COL){
+                newNode.isStart = true;
+            } else if(row === FINISH_NODE_ROW && col === FINISH_NODE_COL){
+                newNode.isFinish = true;
+            }
+            currentRow.push(newNode);
         }
         grid.push(currentRow);
     }
@@ -111,8 +191,8 @@ const createNode = (col, row) => {
     return {
         col,
         row,
-        isStart: row === START_NODE_ROW && col ===START_NODE_COL,
-        isFinish : row === FINISH_NODE_ROW && col === FINISH_NODE_COL,
+        isStart: false,
+        isFinish : false,
         distance : Infinity,
         isVisited : false,
         isWall : false,
