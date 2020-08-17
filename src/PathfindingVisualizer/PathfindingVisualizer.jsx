@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import Node from './Node/Node';
-// import {dijkstra, getNodesInShortestPathOrder} from '../algorithms/djikstra'
+import {Navbar, NavItem, DropdownMenu} from './Navbar';
+import {ReactComponent as Caret} from '../icons/caret.svg';
+// import {dijkstra, getNodesInShortestPathOrder} from '.../icons/arrow.svg'
 
 import './PathfindingVisualizer.css';
 
@@ -14,7 +16,7 @@ export default class PathfindingVisualizer extends Component {
         super(props);
         this.state = {
             grid : [],
-            mouseIsPressed : false
+            mouseIsPressed : false,
         }
     }
 
@@ -56,6 +58,11 @@ export default class PathfindingVisualizer extends Component {
 
       return (
           <>
+          <Navbar>
+              <NavItem icon = {<Caret />}> 
+                <DropdownMenu />
+              </NavItem>
+          </Navbar>
             {/* <button onClick = {()=> this.visualizeDijkstra()}> Visualize Dijkstra's Algorithm </button> */}
             <div className = "grid">
                 {grid.map((row, rowIdx) => {
