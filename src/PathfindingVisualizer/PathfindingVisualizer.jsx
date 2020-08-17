@@ -61,6 +61,7 @@ export default class PathfindingVisualizer extends Component {
           <Navbar>
               <NavItem icon = {<Caret />}> 
                 <DropdownMenu />
+
               </NavItem>
           </Navbar>
             {/* <button onClick = {()=> this.visualizeDijkstra()}> Visualize Dijkstra's Algorithm </button> */}
