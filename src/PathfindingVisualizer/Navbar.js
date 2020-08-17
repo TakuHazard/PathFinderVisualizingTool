@@ -22,6 +22,16 @@ export function Navbar(props){
 
 export function NavItem(props){
     const [open,setOpen] = useState(false)
+    if(props.icon == null){
+        return (
+            <li className = "nav-item">
+                <a href = "#" className = "icon-button" onClick = {()=> setOpen(!open)}>
+
+                </a>
+                {open && props.children}
+            </li>
+        )
+    }
     return(
         <li className = "nav-item">
             <a href = "#" className = "icon-button" onClick = {()=> setOpen(!open)}>
@@ -68,17 +78,28 @@ export function DropdownMenu() {
           <div className="menu">
             <DropdownItem>About</DropdownItem>
             <DropdownItem
+                leftIcon = {<BoltIcon/>}
+            >Clear Board
+            </DropdownItem>
+            <DropdownItem
+              leftIcon="🦧"
+              rightIcon={<ChevronIcon />}
+              goToMenu="algorithms">
+              Choose Algorithm
+            </DropdownItem>
+            <DropdownItem
+                leftIcon = "{}"
+                rightIcon = {<ChevronIcon />}
+                goToMenu = "createMaze">
+            Create Maze
+            </DropdownItem>
+            <DropdownItem
               leftIcon={<CogIcon />}
               rightIcon={<ChevronIcon />}
               goToMenu="settings">
               Settings
             </DropdownItem>
-            <DropdownItem
-              leftIcon="🦧"
-              rightIcon={<ChevronIcon />}
-              goToMenu="animals">
-              Animals
-            </DropdownItem>
+
   
           </div>
         </CSSTransition>
@@ -91,29 +112,44 @@ export function DropdownMenu() {
           onEnter={calcHeight}>
           <div className="menu">
             <DropdownItem goToMenu="main" leftIcon={<ArrowIcon />}>
-              <h2>Pathfinder Visualizer Tool</h2>
+              <h2>Settings</h2>
             </DropdownItem>
-            <DropdownItem leftIcon={<BoltIcon />}>HTML</DropdownItem>
-            <DropdownItem leftIcon={<BoltIcon />}>CSS</DropdownItem>
-            <DropdownItem leftIcon={<BoltIcon />}>JavaScript</DropdownItem>
-            <DropdownItem leftIcon={<BoltIcon />}>Awesome!</DropdownItem>
+            <DropdownItem leftIcon={<BoltIcon />}>Speed</DropdownItem>
+            <DropdownItem leftIcon={<BoltIcon />}>Music</DropdownItem>
           </div>
         </CSSTransition>
   
         <CSSTransition
-          in={activeMenu === 'animals'}
+          in={activeMenu === 'algorithms'}
           timeout={500}
           classNames="menu-secondary"
           unmountOnExit
           onEnter={calcHeight}>
           <div className="menu">
             <DropdownItem goToMenu="main" leftIcon={<ArrowIcon />}>
-              <h2>Animals</h2>
+              <h2>Algorithms</h2>
             </DropdownItem>
-            <DropdownItem leftIcon="🦘">Kangaroo</DropdownItem>
-            <DropdownItem leftIcon="🐸">Frog</DropdownItem>
-            <DropdownItem leftIcon="🦋">Horse?</DropdownItem>
-            <DropdownItem leftIcon="🦔">Hedgehog</DropdownItem>
+            <DropdownItem leftIcon="🦘">Djikstra's Algorithm</DropdownItem>
+            <DropdownItem leftIcon="🐸">A-star Algorithm</DropdownItem>
+            <DropdownItem leftIcon="🦋">Depth First</DropdownItem>
+            <DropdownItem leftIcon="🦔">Breadth First</DropdownItem>
+          </div>
+        </CSSTransition>
+
+        <CSSTransition
+          in={activeMenu === 'createMaze'}
+          timeout={500}
+          classNames="menu-secondary"
+          unmountOnExit
+          onEnter={calcHeight}>
+          <div className="menu">
+            <DropdownItem goToMenu="main" leftIcon={<ArrowIcon />}>
+              <h2>Create Maze</h2>
+            </DropdownItem>
+            <DropdownItem leftIcon="🦘">Randomized Maze</DropdownItem>
+            <DropdownItem leftIcon="🐸">Kruskal's</DropdownItem>
+            <DropdownItem leftIcon="🦋">Prim's</DropdownItem>
+            <DropdownItem leftIcon="🦔">Recursive Backtracker</DropdownItem>
           </div>
         </CSSTransition>
       </div>
