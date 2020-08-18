@@ -31,7 +31,7 @@ export default class Node extends Component{
 
         return <div 
         className = {`node ${extraClassName}`}
-        id = {`row ${row} col ${col}`}
+        id = {`node-${row}-${col}`}
         onMouseDown = {()=> onMouseDown(row, col)}
         onMouseUp = {()=> onMouseUp(row, col)}
         onMouseEnter = {()=> onMouseEnter(row, col)}
