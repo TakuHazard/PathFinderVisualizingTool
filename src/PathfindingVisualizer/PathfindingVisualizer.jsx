@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import Node from './Node/Node';
 import {dijkstra, getNodesInShortestPathOrder} from '../algorithms/djikstra'
+import {depthFirst,getShortestPath} from '../algorithms/depthFirst'
 
 import './PathfindingVisualizer.css';
 
@@ -110,6 +111,28 @@ export default class PathfindingVisualizer extends Component {
         // this.animateDijkstra(visitedNodesInOrder);
     }
 
+    visualizeDepthFirst(){
+        const {grid} = this.state;
+        const startNode = getStartNode(this.state.grid);
+        const finishNode = getFinishNode(this.state.grid);
+        console.log("calling DFS JUST BEFORE")
+        const visitedNodesInOrder = depthFirst(startNode, finishNode,grid);
+
+        console.log("DONE HERE")
+        const nodesInShortestPathOrder = getShortestPath(finishNode);
+
+        console.log("DONE DFS", visitedNodesInOrder);
+        console.log("DONE HERE", nodesInShortestPathOrder);
+        this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
+
+
+        // const startNode = grid[START_NODE_ROW][START_NODE_COL];
+        // const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
+        // const visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
+        // const getNodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
+        // this.animateDijkstra(visitedNodesInOrder);
+    }
+
     removePaths(grid){
         for(let row = 0; row < 20; row++){
             for(let col = 0; col < 50; col ++){
@@ -122,9 +145,11 @@ export default class PathfindingVisualizer extends Component {
     clearBoard(grid){
         // this.removePaths(grid)
         // document.getElementById('node-visited').className = '';
-        this.forceUpdate()
-        const newGrid = getInitialGrid()
+        const newGrid = getInitialGrid();
+
         this.setState({grid : newGrid, mouseIsPressed : false})
+
+        this.forceUpdate();
     }
 
     render(){
@@ -134,6 +159,7 @@ export default class PathfindingVisualizer extends Component {
           <>
           <button onClick = {()=> this.clearBoard(this.state.grid)}></button>
             <button onClick = {()=> this.visualizeDijkstra()}> Visualize Dijkstra's Algorithm </button>
+            <button onClick = {() => this. visualizeDepthFirst() } > Visualize Depth First</button>
             <div className = "grid">
                 {grid.map((row, rowIdx) => {
                     return(
