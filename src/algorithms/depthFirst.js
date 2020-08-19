@@ -11,15 +11,16 @@ export function depthFirst(startNode, finishNode, grid){
 
 
 function depthFirstExploration(currentNode, finishNode, grid){
+    if(foundFinishNode){
+        return;
+    }
     if(currentNode.isWall){
         return;
     }
     if(currentNode === finishNode){
         foundFinishNode = true;
     }
-    if(foundFinishNode){
-        return;
-    }
+   
 
     if(currentNode.isVisited){
         return;

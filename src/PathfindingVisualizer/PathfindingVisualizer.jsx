@@ -1,7 +1,10 @@
 import React, {Component} from 'react';
 import Node from './Node/Node';
-import {dijkstra, getNodesInShortestPathOrder} from '../algorithms/djikstra'
-import {depthFirst,getShortestPath} from '../algorithms/depthFirst'
+import {dijkstra, getNodesInShortestPathOrder} from '../algorithms/djikstra';
+import {depthFirst,getShortestPath} from '../algorithms/depthFirst';
+import {breadthFirst, getShortestPathBFS} from '../algorithms/breadthFirst';
+import {aStar, getShortestPathAStar} from '../algorithms/aStar';
+
 
 import './PathfindingVisualizer.css';
 
@@ -94,6 +97,16 @@ export default class PathfindingVisualizer extends Component {
 
     }
 
+    visualizeAStar(){
+        const {grid} = this.state;
+        const startNode = getStartNode(this.state.grid);
+        const finishNode = getFinishNode(this.state.grid);
+        const visitedNodesInOrder = aStar(startNode, finishNode,grid);
+
+        const nodesInShortestPathOrder = getShortestPathAStar(finishNode);
+        this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
+    }
+
     visualizeDijkstra(){
         const {grid} = this.state;
         const startNode = getStartNode(this.state.grid);
@@ -102,13 +115,6 @@ export default class PathfindingVisualizer extends Component {
 
         const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
         this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
-
-
-        // const startNode = grid[START_NODE_ROW][START_NODE_COL];
-        // const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
-        // const visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
-        // const getNodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
-        // this.animateDijkstra(visitedNodesInOrder);
     }
 
     visualizeDepthFirst(){
@@ -124,14 +130,17 @@ export default class PathfindingVisualizer extends Component {
         console.log("DONE DFS", visitedNodesInOrder);
         console.log("DONE HERE", nodesInShortestPathOrder);
         this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
-
-
-        // const startNode = grid[START_NODE_ROW][START_NODE_COL];
-        // const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
-        // const visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
-        // const getNodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
-        // this.animateDijkstra(visitedNodesInOrder);
     }
+
+    visualizeBreadthFirst(){
+        const {grid} = this.state;
+        const startNode = getStartNode(this.state.grid);
+        const finishNode = getFinishNode(this.state.grid);
+        const visitedNodesInOrder = breadthFirst(startNode, finishNode,grid);
+        const nodesInShortestPathOrder = getShortestPathBFS(finishNode);
+        this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
+    }
+
 
     removePaths(grid){
         for(let row = 0; row < 20; row++){
@@ -143,8 +152,7 @@ export default class PathfindingVisualizer extends Component {
         }
     }
     clearBoard(grid){
-        // this.removePaths(grid)
-        // document.getElementById('node-visited').className = '';
+ 
         const newGrid = getInitialGrid();
 
         this.setState({grid : newGrid, mouseIsPressed : false})
@@ -157,9 +165,7 @@ export default class PathfindingVisualizer extends Component {
 
       return (
           <>
-          <button onClick = {()=> this.clearBoard(this.state.grid)}></button>
-            <button onClick = {()=> this.visualizeDijkstra()}> Visualize Dijkstra's Algorithm </button>
-            <button onClick = {() => this. visualizeDepthFirst() } > Visualize Depth First</button>
+           
             <div className = "grid">
                 {grid.map((row, rowIdx) => {
                     return(
@@ -185,6 +191,13 @@ export default class PathfindingVisualizer extends Component {
                     );
                 })}
             </div>
+            <button onClick = {()=> this.clearBoard(this.state.grid)}></button>
+            <button onClick = {()=> this.visualizeDijkstra()}> Visualize Dijkstra's Algorithm </button>
+            <button onClick = {() => this. visualizeDepthFirst() } > Visualize Depth First</button>
+            <button onClick = {() => this. visualizeBreadthFirst() } > Visualize Breadth First</button>
+            <button onClick = {() => this. visualizeAStar() } > Visualize AStar</button>
+
+
           </>
       );
     }
