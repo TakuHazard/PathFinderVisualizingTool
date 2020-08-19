@@ -1,13 +1,3 @@
-// f(n) = g(n) + h(n), where h(n) is the heuristic and g(n) is the actual cost from start
-// closed set are points where don't need to reconsider. Open set are nodes that still need to be evaluated.
-// termination point when open set is empty || get to the last point.
-// open set begins with starting node.
-
-
-
-// algorithm
-
-
 var openSet = [];
 var closedSet = [];
 var foundFinishNode = false;
