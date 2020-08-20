@@ -1,8 +1,20 @@
+var cloneDeep = require('lodash.clonedeep');
+var _ = require('lodash');
+
 const ROWS = 14;
 const COLS = 29;
-const arrayBlock = []
-export const createBlocks = (grid) => {
+const arrayBlock = [];
+
+var count = 0;
+
+const wallsAddedInOrder = [];
+const visitedNodesInOrder = [];
+
+var grid;
+
+export function createBlocks(gridInput){
     let index = 0;
+    grid = _.cloneDeep(gridInput);
     for(let row = 1; row < grid.length; row += 2){
         for(let col = 1; col < grid[0].length; col += 2){
             let centerpiece = grid[row][col];
@@ -24,6 +36,15 @@ export const createBlocks = (grid) => {
     return grid;
 }
 
+export function wallsAddedInOrderFn(){
+
+    return wallsAddedInOrder;
+}
+export function removeWalls(){
+    console.log('count is ', count);
+    console.log('array has', visitedNodesInOrder.length)
+    return visitedNodesInOrder;
+}
 function recursiveBackTracking(currentBlock,grid){
     currentBlock.visited = true;
     let neighbors = getNeighbors(currentBlock);
@@ -39,25 +60,33 @@ function recursiveBackTracking(currentBlock,grid){
 }
 
 function clearPath(currentBlock, neighborBlock,grid){
+    count++;
     // console.log('currentBlock is', currentBlock, 'centerpiece is', currentBlock.centerpiece);
     // console.log('neighbor is ', neighborBlock);
     if(currentBlock.centerpiece.col < neighborBlock.centerpiece.col){
         grid[currentBlock.centerpiece.row][currentBlock.centerpiece.col + 1].isWall = false;
+        visitedNodesInOrder.push(grid[currentBlock.centerpiece.row][currentBlock.centerpiece.col + 1]);
         currentBlock.rightWall = false;
         neighborBlock.leftWall = false;
 
     } else if(currentBlock.centerpiece.col > neighborBlock.centerpiece.col){
         grid[currentBlock.centerpiece.row][currentBlock.centerpiece.col - 1].isWall = false;
+        visitedNodesInOrder.push(grid[currentBlock.centerpiece.row][currentBlock.centerpiece.col - 1]);
+
         currentBlock.leftWall = false;
         neighborBlock.rightWall = false;
 
     } else if (currentBlock.centerpiece.row > neighborBlock.centerpiece.row){
         grid[currentBlock.centerpiece.row - 1][currentBlock.centerpiece.col].isWall =false;
+        visitedNodesInOrder.push(grid[currentBlock.centerpiece.row - 1][currentBlock.centerpiece.col]);
+
         currentBlock.topWall = false;
         neighborBlock.bottomWall = false;
 
     } else if (currentBlock.centerpiece.row < neighborBlock.centerpiece.row){
         grid[currentBlock.centerpiece.row + 1][currentBlock.centerpiece.col].isWall =false;
+        visitedNodesInOrder.push(grid[currentBlock.centerpiece.row + 1][currentBlock.centerpiece.col]);
+
         currentBlock.topWall = false;
         neighborBlock.bottomWall = false;
     }
@@ -153,6 +182,10 @@ function createTopWall(centerpiece, grid){
     grid[row - 1][col - 1].isWall = true;
     grid[row - 1][col].isWall = true;
     grid[row - 1][col + 1].isWall = true;
+
+    wallsAddedInOrder.push(grid[row - 1][col - 1]);
+    wallsAddedInOrder.push(grid[row - 1][col]);
+    wallsAddedInOrder.push(grid[row - 1][col + 1]);
 }
 
 function createBottomWall(centerpiece, grid){
@@ -161,6 +194,10 @@ function createBottomWall(centerpiece, grid){
     grid[row + 1][col].isWall = true;
     grid[row + 1][col + 1].isWall = true;
 
+    wallsAddedInOrder.push(grid[row + 1][col - 1]);
+    wallsAddedInOrder.push(grid[row + 1][col]);
+    wallsAddedInOrder.push(grid[row + 1][col + 1]);
+
 }
 
 function createLeftWall(centerpiece, grid){
@@ -168,6 +205,10 @@ function createLeftWall(centerpiece, grid){
     grid[row - 1][col - 1].isWall = true;
     grid [row][col - 1].isWall = true;
     grid[row + 1][col  - 1].isWall = true;
+
+    wallsAddedInOrder.push(grid[row - 1][col - 1]);
+    wallsAddedInOrder.push(grid[row ][col - 1]);
+    wallsAddedInOrder.push(grid[row + 1][col - 1]);
 }
 
 function createRightWall(centerpiece, grid){
@@ -175,6 +216,10 @@ function createRightWall(centerpiece, grid){
     grid[row - 1][col + 1].isWall = true;
     grid[row][col +  1].isWall = true;
     grid[row + 1][col + 1].isWall = true;
+
+    wallsAddedInOrder.push(grid[row - 1][col + 1]);
+    wallsAddedInOrder.push(grid[row][col + 1]);
+    wallsAddedInOrder.push(grid[row + 1][col + 1]);
 }
 
 

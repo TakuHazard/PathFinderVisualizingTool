@@ -2,7 +2,15 @@
     width: 15px;
     height : 15px;
     outline : 1px solid rgb(175, 216, 248);
-    display : inline-block
+    display : inline-block;
+}
+
+.nodeMaze{
+  width: 15px;
+  height : 15px;
+  outline : 1px solid rgb(175, 216, 248);
+  display : inline-block;
+  background-color: grey;
 }
 
 .node-finish {

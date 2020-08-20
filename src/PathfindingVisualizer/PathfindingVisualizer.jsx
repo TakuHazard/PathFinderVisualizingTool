@@ -6,7 +6,7 @@ import {breadthFirst, getShortestPathBFS} from '../PathFindingAlgorithms/breadth
 import {aStar, getShortestPathAStar} from '../PathFindingAlgorithms/aStar';
 import {randomWalls} from '../MazeGenerationAlgorithms/randomWalls';
 
-import {createBlocks} from '../MazeGenerationAlgorithms/recursiveBackTracking';
+import {createBlocks, wallsAddedInOrderFn, removeWalls} from '../MazeGenerationAlgorithms/recursiveBackTracking';
 
 import './PathfindingVisualizer.css';
 
@@ -146,6 +146,19 @@ export default class PathfindingVisualizer extends Component {
         this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
     }
 
+    clearPaths(){
+        const grid = this.state.grid;
+        for(let row = 0; row  < ROWS; row ++){
+            for(let col = 0; col < COLS; col++){
+                let node = grid[row][col];
+                if(node.isFinish || node.isStart || node.isWall){
+                    continue;
+                } else {
+                    document.getElementById(`node-${node.row}-${node.col}`).className = 'node';
+                }
+            }
+        }
+    }
     generateRandomWalls(){
         const {grid} = this.state;
         const emptyGrid = this.clearBoard();
@@ -160,7 +173,37 @@ export default class PathfindingVisualizer extends Component {
     generateRecursiveBackTrackingMaze(){
         const {grid} = this.state;
         const walledGrid = createBlocks(grid);
-        this.setState({grid : walledGrid})
+        const wallsInOrder = wallsAddedInOrderFn();
+
+
+        for(let i = 0; i < wallsInOrder.length ; i++){
+            let node = wallsInOrder[i];
+            // console.log('node is ', node);
+            const {row, col} = node;
+            if(node.isFinish || node.isStart){
+                continue;
+            }
+            setTimeout(()=>{
+                document.getElementById(`node-${node.row}-${node.col}`).className = 'node wall';
+            }, 0.5 * i);
+        }
+
+        const removedWallsInOrder = removeWalls();
+
+        console.log('removedWallsInOrder size is', removedWallsInOrder.length);
+        for(let i = 0; i < removedWallsInOrder.length; i++){
+            let node = removedWallsInOrder[i];
+            if(node.isFinish || node.isStart){
+                continue;
+            }
+            setTimeout(()=>{
+                document.getElementById(`node-${node.row}-${node.col}`).className = 'node';
+            },1000 + 40 * i);
+        }
+
+        setTimeout(()=> {
+            this.setState({grid : walledGrid})
+        }, 6000);
     }
 
     removePaths(grid){
@@ -212,15 +255,14 @@ export default class PathfindingVisualizer extends Component {
                     );
                 })}
             </div>
-            <button onClick = {()=> this.clearBoard(this.state.grid)}></button>
+            <button onClick = {()=> this.clearPaths()}>Clear Paths</button>
+            <button onClick = {()=> this.clearBoard(this.state.grid)}>Clear Walls</button>
             <button onClick = {()=> this.visualizeDijkstra()}> Visualize Dijkstra's Algorithm </button>
             <button onClick = {() => this. visualizeDepthFirst() } > Visualize Depth First</button>
             <button onClick = {() => this. visualizeBreadthFirst() } > Visualize Breadth First</button>
             <button onClick = {() => this. visualizeAStar() } > Visualize AStar</button>
             <button onClick = {()=> this.generateRandomWalls()}>Generate Random Walls</button>
             <button onClick = {() => this.generateRecursiveBackTrackingMaze()}>Generate Recursive Maze</button>
-
-
           </>
       );
     }
