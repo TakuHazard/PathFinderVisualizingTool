@@ -1,10 +1,12 @@
 import React, {Component} from 'react';
 import Node from './Node/Node';
-import {dijkstra, getNodesInShortestPathOrder} from '../algorithms/djikstra';
-import {depthFirst,getShortestPath} from '../algorithms/depthFirst';
-import {breadthFirst, getShortestPathBFS} from '../algorithms/breadthFirst';
-import {aStar, getShortestPathAStar} from '../algorithms/aStar';
+import {dijkstra, getNodesInShortestPathOrder} from '../PathFindingAlgorithms/djikstra';
+import {depthFirst,getShortestPath} from '../PathFindingAlgorithms/depthFirst';
+import {breadthFirst, getShortestPathBFS} from '../PathFindingAlgorithms/breadthFirst';
+import {aStar, getShortestPathAStar} from '../PathFindingAlgorithms/aStar';
+import {randomWalls} from '../MazeGenerationAlgorithms/randomWalls';
 
+import {createBlocks} from '../MazeGenerationAlgorithms/recursiveBackTracking';
 
 import './PathfindingVisualizer.css';
 
@@ -12,6 +14,9 @@ const START_NODE_ROW = 10;
 const START_NODE_COL = 15;
 const FINISH_NODE_ROW = 10;
 const FINISH_NODE_COL = 35;
+
+const ROWS = 29;
+const COLS = 59;
 
 export default class PathfindingVisualizer extends Component {
     constructor(props){
@@ -75,7 +80,7 @@ export default class PathfindingVisualizer extends Component {
                 const node = nodesInShortestPathOrder[i];
                 console.log("HERE",document.getElementById(`node-${node.row}-${node.col}`).className)
                 document.getElementById(`node-${node.row}-${node.col}`).className = 'node node-shortest-path';
-            }, 50 * i);
+            }, COLS * i);
         }
     }
 
@@ -141,10 +146,26 @@ export default class PathfindingVisualizer extends Component {
         this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
     }
 
+    generateRandomWalls(){
+        const {grid} = this.state;
+        const emptyGrid = this.clearBoard();
+        this.setState({grid})
+        const rows = ROWS;
+        const cols = COLS;
+
+        const gridWithRandomWalls = randomWalls(rows,cols,grid, 0.3);
+        this.setState({grid : gridWithRandomWalls});
+    }
+
+    generateRecursiveBackTrackingMaze(){
+        const {grid} = this.state;
+        const walledGrid = createBlocks(grid);
+        this.setState({grid : walledGrid})
+    }
 
     removePaths(grid){
-        for(let row = 0; row < 20; row++){
-            for(let col = 0; col < 50; col ++){
+        for(let row = 0; row < ROWS; row++){
+            for(let col = 0; col < COLS; col ++){
                 if(grid[row][col].isVisited){
                     grid[row][col].isVisited = false;
                 }
@@ -196,6 +217,8 @@ export default class PathfindingVisualizer extends Component {
             <button onClick = {() => this. visualizeDepthFirst() } > Visualize Depth First</button>
             <button onClick = {() => this. visualizeBreadthFirst() } > Visualize Breadth First</button>
             <button onClick = {() => this. visualizeAStar() } > Visualize AStar</button>
+            <button onClick = {()=> this.generateRandomWalls()}>Generate Random Walls</button>
+            <button onClick = {() => this.generateRecursiveBackTrackingMaze()}>Generate Recursive Maze</button>
 
 
           </>
@@ -205,8 +228,8 @@ export default class PathfindingVisualizer extends Component {
 
 
 const getFinishNode = (grid) => {
-    for(let row = 0; row < 20; row++){
-        for(let col = 0; col < 50; col++){
+    for(let row = 0; row < ROWS; row++){
+        for(let col = 0; col < COLS; col++){
             if(grid[row][col].isFinish){
                 return grid[row][col]
             }
@@ -214,8 +237,8 @@ const getFinishNode = (grid) => {
     }
 }
 const getStartNode = (grid) => {
-    for(let row = 0; row < 20; row++){
-        for(let col = 0; col < 50; col++){
+    for(let row = 0; row < ROWS; row++){
+        for(let col = 0; col < COLS; col++){
             if(grid[row][col].isStart){
                 return grid[row][col];
             }
@@ -225,8 +248,8 @@ const getStartNode = (grid) => {
 const movePoint = (newRow, newCol, currentGrid, isStart) => {
     if(isStart){
         const grid = currentGrid.slice();
-        for(let row = 0; row < 20; row++){
-            for(let col = 0; col < 50; col++){
+        for(let row = 0; row < ROWS; row++){
+            for(let col = 0; col < COLS; col++){
                 const node = grid[row][col];
                 if(node.isStart){
                     node.isStart = false;
@@ -234,8 +257,8 @@ const movePoint = (newRow, newCol, currentGrid, isStart) => {
             }
         }
     
-        for(let row = 0; row < 20; row++){
-            for(let col = 0; col < 50; col++){
+        for(let row = 0; row < ROWS; row++){
+            for(let col = 0; col < COLS; col++){
                 const node = grid[row][col];
                 if(row === newRow && col === newCol){
                     node.isStart = true;
@@ -246,8 +269,8 @@ const movePoint = (newRow, newCol, currentGrid, isStart) => {
     }
    else{
     const grid = currentGrid.slice();
-    for(let row = 0; row < 20; row++){
-        for(let col = 0; col < 50; col++){
+    for(let row = 0; row < ROWS; row++){
+        for(let col = 0; col < COLS; col++){
             const node = grid[row][col];
             if(node.isFinish){
                 node.isFinish = false;
@@ -255,8 +278,8 @@ const movePoint = (newRow, newCol, currentGrid, isStart) => {
         }
     }
 
-    for(let row = 0; row < 20; row++){
-        for(let col = 0; col < 50; col++){
+    for(let row = 0; row < ROWS; row++){
+        for(let col = 0; col < COLS; col++){
             const node = grid[row][col];
             if(row === newRow && col === newCol){
                 node.isFinish = true;
@@ -271,9 +294,9 @@ const movePoint = (newRow, newCol, currentGrid, isStart) => {
 
 const getInitialGrid = () => {
     const grid = [];
-    for(let row = 0; row < 20; row++){
+    for(let row = 0; row < ROWS; row++){
         const currentRow = [];
-        for(let col = 0; col < 50; col++){
+        for(let col = 0; col < COLS; col++){
             const newNode = createNode(col, row)
             if(row === START_NODE_ROW && col === START_NODE_COL){
                 newNode.isStart = true;
