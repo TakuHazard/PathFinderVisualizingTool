@@ -6,7 +6,7 @@ import {breadthFirst, getShortestPathBFS} from '../PathFindingAlgorithms/breadth
 import {aStar, getShortestPathAStar} from '../PathFindingAlgorithms/aStar';
 import {randomWalls} from '../MazeGenerationAlgorithms/randomWalls';
 
-import {createMaze, wallsAddedInOrderFn, removeWalls, initializeEverything} from '../MazeGenerationAlgorithms/recursiveBackTracking';
+import {createMaze, removeWalls, initializeEverything} from '../MazeGenerationAlgorithms/recursiveBackTracking';
 
 import './PathfindingVisualizer.css';
 
@@ -46,7 +46,6 @@ export default class PathfindingVisualizer extends Component {
             const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
             this.setState({grid : newGrid, mouseIsPressed : true});
         }
-      
     }
 
     handleMouseEnter(row, col){
@@ -73,17 +72,20 @@ export default class PathfindingVisualizer extends Component {
         this.setState({movingFinish : false});
         this.setState({mouseIsPressed: false});
     }
+    
     animateShortestPath(nodesInShortestPathOrder){
         for(let i = 0; i < nodesInShortestPathOrder.length; i++){
             setTimeout(()=> {
                 const node = nodesInShortestPathOrder[i];
-                console.log("HERE",document.getElementById(`node-${node.row}-${node.col}`).className)
+                if(node.isFinish || node.isStart){
+                    return;
+                }
                 document.getElementById(`node-${node.row}-${node.col}`).className = 'node node-shortest-path';
             }, COLS * i);
         }
     }
 
-    animateDijkstra(visitedNodesInOrder, getNodesInShortestPathOrder){
+    animateAlgorithm(visitedNodesInOrder, getNodesInShortestPathOrder){
        for(let i = 0; i <= visitedNodesInOrder.length; i++){
            if(i === visitedNodesInOrder.length){
                setTimeout(()=> {
@@ -94,6 +96,9 @@ export default class PathfindingVisualizer extends Component {
 
            setTimeout(()=> {
                const node = visitedNodesInOrder[i];
+               if(node.isStart || node.isFinish){
+                   return;
+               }
                document.getElementById(`node-${node.row}-${node.col}`).className = 'node node-visited';
            }, 10 * i)
        }
@@ -107,7 +112,7 @@ export default class PathfindingVisualizer extends Component {
         const visitedNodesInOrder = aStar(startNode, finishNode,grid);
 
         const nodesInShortestPathOrder = getShortestPathAStar(finishNode);
-        this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
+        this.animateAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
     }
 
     visualizeDijkstra(){
@@ -117,7 +122,7 @@ export default class PathfindingVisualizer extends Component {
         const visitedNodesInOrder = dijkstra(grid,startNode, finishNode);
 
         const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
-        this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
+        this.animateAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
     }
 
     visualizeDepthFirst(){
@@ -125,13 +130,9 @@ export default class PathfindingVisualizer extends Component {
         const startNode = getStartNode(this.state.grid);
         const finishNode = getFinishNode(this.state.grid);
 
-        console.log("size of grid is", grid.length, grid[0].length);
         const visitedNodesInOrder = depthFirst(startNode, finishNode,grid);
-        console.log('visitedINVISUALIZE IS', visitedNodesInOrder.length)
-
         const nodesInShortestPathOrder = getShortestPath(finishNode);
-
-        this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
+        this.animateAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
     }
 
     visualizeBreadthFirst(){
@@ -140,7 +141,7 @@ export default class PathfindingVisualizer extends Component {
         const finishNode = getFinishNode(this.state.grid);
         const visitedNodesInOrder = breadthFirst(startNode, finishNode,grid);
         const nodesInShortestPathOrder = getShortestPathBFS(finishNode);
-        this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
+        this.animateAlgorithm(visitedNodesInOrder, nodesInShortestPathOrder);
     }
 
     clearWalls(){
@@ -155,7 +156,12 @@ export default class PathfindingVisualizer extends Component {
             for(let col = 0; col < COLS; col++){
                 let node = grid[row][col];
                 if(node.isWall) continue;
-       
+                if(node.isStart || node.isFinish){
+                    document.getElementById(`node-${node.row}-${node.col}`).className = node.isStart ? 'node node-start' : 'node node-finish';
+                    node.isVisited = false;
+                    continue;
+
+                }
                 node.isVisited = false;
                 document.getElementById(`node-${node.row}-${node.col}`).className = 'node';
 
