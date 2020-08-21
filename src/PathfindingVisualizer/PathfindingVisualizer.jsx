@@ -90,8 +90,8 @@ export default class PathfindingVisualizer extends Component {
                 })}
             </div>
             <div>
-                <button>Clear Paths</button>
-                <button>Clear Walls</button>
+                <button className = "buttonHome">Clear Paths</button>
+                <button className = "buttonHome">Clear Walls</button>
             </div>
           </>
       );

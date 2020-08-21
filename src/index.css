@@ -101,7 +101,6 @@ a {
   border-radius : var(--border-radius);
   padding : 1rem;
   overflow : hidden;
-
   transition : height var(--speed)
 }
 
@@ -173,4 +172,11 @@ a {
 .about{
   color : white;
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.buttonHome{
+  color : white;
+  background-color : #242426;
+  font-size :20px;
+  border-radius: 8px;
 }
