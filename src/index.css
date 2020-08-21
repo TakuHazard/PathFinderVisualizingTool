@@ -12,6 +12,7 @@ code {
     monospace;
 }
 
+
 :root {
   --bg : #242426;
   --bg-accent : #484a4d;
@@ -167,4 +168,9 @@ a {
 .menu-secondary-exit-active{
   transform : translateX(110%);
   transition: all var(--speed) ease;
+}
+
+.about{
+  color : white;
+  font-family: Arial, Helvetica, sans-serif;
 }

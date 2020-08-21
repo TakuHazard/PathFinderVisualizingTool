@@ -89,6 +89,10 @@ export default class PathfindingVisualizer extends Component {
                     );
                 })}
             </div>
+            <div>
+                <button>Clear Paths</button>
+                <button>Clear Walls</button>
+            </div>
           </>
       );
     }
