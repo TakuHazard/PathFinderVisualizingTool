@@ -164,7 +164,6 @@ export default class PathfindingVisualizer extends Component {
     }
     generateRandomWalls(){
         const {grid} = this.state;
-        const emptyGrid = this.clearBoard();
         this.setState({grid})
         const rows = ROWS;
         const cols = COLS;
