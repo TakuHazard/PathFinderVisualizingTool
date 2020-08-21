@@ -6,7 +6,7 @@ import {breadthFirst, getShortestPathBFS} from '../PathFindingAlgorithms/breadth
 import {aStar, getShortestPathAStar} from '../PathFindingAlgorithms/aStar';
 import {randomWalls} from '../MazeGenerationAlgorithms/randomWalls';
 
-import {createBlocks, wallsAddedInOrderFn, removeWalls} from '../MazeGenerationAlgorithms/recursiveBackTracking';
+import {createMaze, wallsAddedInOrderFn, removeWalls, initializeEverything} from '../MazeGenerationAlgorithms/recursiveBackTracking';
 
 import './PathfindingVisualizer.css';
 
@@ -74,7 +74,6 @@ export default class PathfindingVisualizer extends Component {
         this.setState({mouseIsPressed: false});
     }
     animateShortestPath(nodesInShortestPathOrder){
-        console.log("nodes in shortest path order", nodesInShortestPathOrder)
         for(let i = 0; i < nodesInShortestPathOrder.length; i++){
             setTimeout(()=> {
                 const node = nodesInShortestPathOrder[i];
@@ -87,7 +86,6 @@ export default class PathfindingVisualizer extends Component {
     animateDijkstra(visitedNodesInOrder, getNodesInShortestPathOrder){
        for(let i = 0; i <= visitedNodesInOrder.length; i++){
            if(i === visitedNodesInOrder.length){
-               console.log("calling animate shortest path order")
                setTimeout(()=> {
                    this.animateShortestPath(getNodesInShortestPathOrder);
                }, 10 * i);
@@ -126,14 +124,13 @@ export default class PathfindingVisualizer extends Component {
         const {grid} = this.state;
         const startNode = getStartNode(this.state.grid);
         const finishNode = getFinishNode(this.state.grid);
-        console.log("calling DFS JUST BEFORE")
-        const visitedNodesInOrder = depthFirst(startNode, finishNode,grid);
 
-        console.log("DONE HERE")
+        console.log("size of grid is", grid.length, grid[0].length);
+        const visitedNodesInOrder = depthFirst(startNode, finishNode,grid);
+        console.log('visitedINVISUALIZE IS', visitedNodesInOrder.length)
+
         const nodesInShortestPathOrder = getShortestPath(finishNode);
 
-        console.log("DONE DFS", visitedNodesInOrder);
-        console.log("DONE HERE", nodesInShortestPathOrder);
         this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
     }
 
@@ -146,16 +143,22 @@ export default class PathfindingVisualizer extends Component {
         this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
     }
 
+    clearWalls(){
+        const newGrid = getInitialGrid();
+        this.setState({grid : newGrid});
+
+    }
+
     clearPaths(){
         const grid = this.state.grid;
         for(let row = 0; row  < ROWS; row ++){
             for(let col = 0; col < COLS; col++){
                 let node = grid[row][col];
-                if(node.isFinish || node.isStart || node.isWall){
-                    continue;
-                } else {
-                    document.getElementById(`node-${node.row}-${node.col}`).className = 'node';
-                }
+                if(node.isWall) continue;
+       
+                node.isVisited = false;
+                document.getElementById(`node-${node.row}-${node.col}`).className = 'node';
+
             }
         }
     }
@@ -172,56 +175,35 @@ export default class PathfindingVisualizer extends Component {
 
     generateRecursiveBackTrackingMaze(){
         const {grid} = this.state;
-        const walledGrid = createBlocks(grid);
-        const wallsInOrder = wallsAddedInOrderFn();
+        initializeEverything();
+        const newGrid = createMaze(grid);
 
-
-        for(let i = 0; i < wallsInOrder.length ; i++){
-            let node = wallsInOrder[i];
-            // console.log('node is ', node);
-            const {row, col} = node;
-            if(node.isFinish || node.isStart){
-                continue;
-            }
-            setTimeout(()=>{
+        for(let row = 0; row < ROWS; row ++){
+            for(let col = 0; col < COLS; col++){
+                let node = grid[row][col];
+                if(node.isStart || node.isFinish){
+                    continue;
+                }
+                node.isWall = true;
                 document.getElementById(`node-${node.row}-${node.col}`).className = 'node wall';
-            }, 0.5 * i);
+            }
         }
-
         const removedWallsInOrder = removeWalls();
 
-        console.log('removedWallsInOrder size is', removedWallsInOrder.length);
         for(let i = 0; i < removedWallsInOrder.length; i++){
             let node = removedWallsInOrder[i];
             if(node.isFinish || node.isStart){
+                newGrid[node.row][node.col].isWall = false;
+                node.isWall = false;
+                document.getElementById(`node-${node.row}-${node.col}`).className = node.isFinish ? 'node node-finish' : 'node node-start';
                 continue;
             }
             setTimeout(()=>{
+                node.isWall = false;
                 document.getElementById(`node-${node.row}-${node.col}`).className = 'node';
-            },1000 + 40 * i);
+            }, 10 * i);
         }
-
-        setTimeout(()=> {
-            this.setState({grid : walledGrid})
-        }, 6000);
-    }
-
-    removePaths(grid){
-        for(let row = 0; row < ROWS; row++){
-            for(let col = 0; col < COLS; col ++){
-                if(grid[row][col].isVisited){
-                    grid[row][col].isVisited = false;
-                }
-            }
-        }
-    }
-    clearBoard(grid){
- 
-        const newGrid = getInitialGrid();
-
-        this.setState({grid : newGrid, mouseIsPressed : false})
-
-        this.forceUpdate();
+        this.setState({grid : newGrid});
     }
 
     render(){
@@ -256,7 +238,7 @@ export default class PathfindingVisualizer extends Component {
                 })}
             </div>
             <button onClick = {()=> this.clearPaths()}>Clear Paths</button>
-            <button onClick = {()=> this.clearBoard(this.state.grid)}>Clear Walls</button>
+            <button onClick = {()=> this.clearWalls(this.state.grid)}>Clear Walls</button>
             <button onClick = {()=> this.visualizeDijkstra()}> Visualize Dijkstra's Algorithm </button>
             <button onClick = {() => this. visualizeDepthFirst() } > Visualize Depth First</button>
             <button onClick = {() => this. visualizeBreadthFirst() } > Visualize Breadth First</button>

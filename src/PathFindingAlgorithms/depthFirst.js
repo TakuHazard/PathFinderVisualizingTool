@@ -18,10 +18,11 @@ function depthFirstExploration(currentNode, finishNode, grid){
         return;
     }
     if(currentNode === finishNode){
+        console.log('FOUND FINISH');
+        console.log("WE VISITED", nodesVisitedInOrder.length);
         foundFinishNode = true;
     }
    
-
     if(currentNode.isVisited){
         return;
     }

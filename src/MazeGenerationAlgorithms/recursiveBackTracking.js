@@ -3,24 +3,33 @@ var _ = require('lodash');
 
 const ROWS = 14;
 const COLS = 29;
-const arrayBlock = [];
+var arrayBlock = [];
 
 var count = 0;
 
-const wallsAddedInOrder = [];
-const visitedNodesInOrder = [];
+var wallsAddedInOrder = [];
+var visitedNodesInOrder = [];
 
-var grid;
+var grid = [];
 
-export function createBlocks(gridInput){
+export function initializeEverything(){
+    grid = [];
+    wallsAddedInOrder = [];
+    visitedNodesInOrder = [];
+    arrayBlock = [];
+}
+
+export function createMaze(gridInput){
+    createBlocks(gridInput);
+    recursiveBackTracking(arrayBlock[0], grid);
+    return grid;
+}
+ function createBlocks(gridInput){
     let index = 0;
     grid = _.cloneDeep(gridInput);
     for(let row = 1; row < grid.length; row += 2){
         for(let col = 1; col < grid[0].length; col += 2){
             let centerpiece = grid[row][col];
-            // centerpiece.isWall = true;
-            // let rowB= Math.floor(row/2);
-            // let colB = Math.floor(col/2);
             let block = createBlock(centerpiece,index);
             index++;
             arrayBlock.push(block);
@@ -30,10 +39,6 @@ export function createBlocks(gridInput){
     for(let block of arrayBlock){
         createWalls(block,grid);
     }
-
-    recursiveBackTracking(arrayBlock[0],grid);
-
-    return grid;
 }
 
 export function wallsAddedInOrderFn(){
@@ -50,6 +55,7 @@ function recursiveBackTracking(currentBlock,grid){
     let neighbors = getNeighbors(currentBlock);
     for(let n of neighbors){
         if(n.visited){
+            visitedNodesInOrder.push(n.centerpiece);
             continue;
         } else {
             clearPath(currentBlock, n, grid);
@@ -61,8 +67,7 @@ function recursiveBackTracking(currentBlock,grid){
 
 function clearPath(currentBlock, neighborBlock,grid){
     count++;
-    // console.log('currentBlock is', currentBlock, 'centerpiece is', currentBlock.centerpiece);
-    // console.log('neighbor is ', neighborBlock);
+    visitedNodesInOrder.push(currentBlock.centerpiece);
     if(currentBlock.centerpiece.col < neighborBlock.centerpiece.col){
         grid[currentBlock.centerpiece.row][currentBlock.centerpiece.col + 1].isWall = false;
         visitedNodesInOrder.push(grid[currentBlock.centerpiece.row][currentBlock.centerpiece.col + 1]);
@@ -89,6 +94,8 @@ function clearPath(currentBlock, neighborBlock,grid){
 
         currentBlock.topWall = false;
         neighborBlock.bottomWall = false;
+    } else {
+        console.log('FAILED', currentBlock, neighborBlock);
     }
 
     return;
