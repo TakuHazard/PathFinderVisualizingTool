@@ -15,15 +15,9 @@ import { ReactComponent as Maze } from '../icons/maze.svg';
 import { ReactComponent as Support } from '../icons/support.svg';
 import { ReactComponent as Headphones } from '../icons/headphones.svg';
 
-
-
-
-
-
-
-
-
+var functionReceived;
 export function Navbar(props){
+  functionReceived = props.functionInput;
     return(
         <nav className = "navbar">
             <ul className = "navbar-nav"> {props.children} </ul>
@@ -33,16 +27,6 @@ export function Navbar(props){
 
 export function NavItem(props){
     const [open,setOpen] = useState(false)
-    if(props.icon == null){
-        return (
-            <li className = "nav-item">
-                <a href = "#" className = "icon-button" onClick = {()=> setOpen(!open)}>
-
-                </a>
-                {open && props.children}
-            </li>
-        )
-    }
     return(
         <li className = "nav-item">
             <a href = "#" className = "icon-button" onClick = {()=> setOpen(!open)}>
@@ -66,17 +50,27 @@ export function DropdownMenu() {
       const height = el.offsetHeight;
       setMenuHeight(height);
     }
-  
+    
     function DropdownItem(props) {
       return (
-        <a href="#" className="menu-item" onClick={() => props.goToMenu && setActiveMenu(props.goToMenu)}>
+        <a href="#" className="menu-item" onClick={() => {
+          console.log('input is', props.input);
+          if(props.input !== null && props.input !== undefined){
+            functionReceived(props.input);
+
+          }
+          if(props.input !== null){
+            functionReceived(props.input)
+          }
+          props.goToMenu && setActiveMenu(props.goToMenu)
+        }}>
           <span className="icon-button">{props.leftIcon}</span>
           {props.children}
           <span className="icon-right">{props.rightIcon}</span>
         </a>
       );
     }
-  
+    
     return (
       <div className="dropdown" style={{ height: menuHeight }} ref={dropdownRef}>
   
@@ -140,10 +134,10 @@ export function DropdownMenu() {
             <DropdownItem goToMenu="main" leftIcon={<ArrowIcon />}>
               <h2>Algorithms</h2>
             </DropdownItem>
-            <DropdownItem leftIcon="🦘">Djikstra's Algorithm</DropdownItem>
-            <DropdownItem leftIcon="🐸">A-star Algorithm</DropdownItem>
-            <DropdownItem leftIcon="🦋">Depth First</DropdownItem>
-            <DropdownItem leftIcon="🦔">Breadth First</DropdownItem>
+            <DropdownItem input = {{visualizeIsSet : true, algorithmChosen : 'Visualize Dijkstra Algorithm'}} leftIcon="🦘"  >Djikstra's Algorithm</DropdownItem>
+            <DropdownItem input = {{visualizeIsSet : true, algorithmChosen : 'Visualize AStar Algorithm'}} leftIcon="🐸">A-star Algorithm</DropdownItem>
+            <DropdownItem input = {{visualizeIsSet : true, algorithmChosen : 'Visualize Depth First Algorithm'}} leftIcon="🦋">Depth First</DropdownItem>
+            <DropdownItem input = {{visualizeIsSet : true, algorithmChosen : 'Visualize Breadth First Algorithm'}} leftIcon="🦔">Breadth First</DropdownItem>
           </div>
         </CSSTransition>
 
@@ -158,10 +152,10 @@ export function DropdownMenu() {
               <h2>Create Maze</h2>
             </DropdownItem>
             <DropdownItem goToMenu = "placingWalls" leftIcon="🦘">User placed Walls</DropdownItem>
-            <DropdownItem leftIcon="🦘">Randomized Walls</DropdownItem>
-            <DropdownItem leftIcon="🐸">Kruskal's Maze Algorithm</DropdownItem>
-            <DropdownItem leftIcon="🦋">Prim's Maze Algoritm</DropdownItem>
-            <DropdownItem leftIcon="🦔">Recursive Backtracker</DropdownItem>
+            <DropdownItem input = {{visualizeIsSet : true, algorithmChosen : 'Generate Random Walls'}} leftIcon="🦘">Randomized Walls</DropdownItem>
+            {/* <DropdownItem input = {{visualizeIsSet : true, algorithmChosen : ' Visualize Recursive BackTracking Algorithm'}} leftIcon="🐸">Kruskal's Maze Algorithm</DropdownItem>
+            <DropdownItem input = {{visualizeIsSet : true, algorithmChosen : ' Visualize Recursive BackTracking Algorithm'}}  leftIcon="🦋">Prim's Maze Algoritm</DropdownItem> */}
+            <DropdownItem input = {{visualizeIsSet : true, algorithmChosen : ' Visualize Recursive BackTracking Algorithm'}}  leftIcon="🦔">Recursive Backtracker</DropdownItem>
           </div>
         </CSSTransition>
         <CSSTransition
@@ -204,7 +198,7 @@ export function DropdownMenu() {
             <DropdownItem goToMenu= "main" leftIcon={<ArrowIcon />}>
               <h2>About</h2>
             </DropdownItem>
-            <p className = "about">This is a Minimalist PathFinder Visualizer and is dedicated to someone very special in my life. Thank you for believing in me.</p>
+            <p className = "about">This is a Minimalist PathFinder Visualizer and is dedicated to someone very special. Thank you for believing in me.</p>
           </div>
         </CSSTransition>
 

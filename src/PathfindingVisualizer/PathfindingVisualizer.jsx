@@ -29,7 +29,12 @@ export default class PathfindingVisualizer extends Component {
             mouseIsPressed : false,
             movingStart : false,
             movingFinish : false,
+            visualizeIsSet : false,
+            algorithmChosen : '',
         }
+
+        this.setStateFn = this.setStateFn.bind(this);
+
     }
 
     componentDidMount(){
@@ -48,6 +53,38 @@ export default class PathfindingVisualizer extends Component {
         else {
             const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
             this.setState({grid : newGrid, mouseIsPressed : true});
+        }
+    }
+
+    printFromVisualize(){
+        console.log('PRINTING FROM VISUALIZER HERE');
+    }
+    visualizeAlgorithms(){
+        console.log(this.setState)
+        if(this.state.visualizeIsSet){
+            if(this.state.algorithmChosen.includes('Dijkstra')){
+                this.visualizeDijkstra();
+            } else if(this.state.algorithmChosen.includes('AStar')){
+                this.visualizeAStar();
+            } else if (this.state.algorithmChosen.includes('Breadth First')){
+                this.visualizeBreadthFirst();
+            } else if (this.state.algorithmChosen.includes('Depth First')){
+                this.visualizeDepthFirst();
+            } else if(this.state.algorithmChosen.includes('Random Walls')){
+                this.generateRandomWalls();
+            } else if(this.state.algorithmChosen.includes('Recursive')){
+                this.generateRecursiveBackTrackingMaze();
+            }
+        }
+    }
+
+    setStateFn(input){
+        if(input !== null && input !== undefined){
+            var inputVisualizerSet = input.visualizeIsSet;
+            var inputAlgorithmChosen = input.algorithmChosen;
+
+            this.setState({visualizeIsSet : inputVisualizerSet, algorithmChosen : inputAlgorithmChosen});
+
         }
     }
 
@@ -219,7 +256,7 @@ export default class PathfindingVisualizer extends Component {
 
       return (
           <>
-          <Navbar>
+          <Navbar functionInput = {this.setStateFn}>
               <NavItem icon = {<Caret />}> 
                 <DropdownMenu />
               </NavItem>
@@ -249,18 +286,19 @@ export default class PathfindingVisualizer extends Component {
                         </div>
                     );
                 })}
-            </div>
-            <button onClick = {()=> this.clearPaths()}>Clear Paths</button>
-            <button onClick = {()=> this.clearWalls(this.state.grid)}>Clear Walls</button>
-            <button onClick = {()=> this.visualizeDijkstra()}> Visualize Dijkstra's Algorithm </button>
-            <button onClick = {() => this. visualizeDepthFirst() } > Visualize Depth First</button>
-            <button onClick = {() => this. visualizeBreadthFirst() } > Visualize Breadth First</button>
-            <button onClick = {() => this. visualizeAStar() } > Visualize AStar</button>
-            <button onClick = {()=> this.generateRandomWalls()}>Generate Random Walls</button>
-            <button onClick = {() => this.generateRecursiveBackTrackingMaze()}>Generate Recursive Maze</button>
+            </div>   
+            <button onClick = {()=> this.setState({visualizeIsSet : true, algorithmChosen : 'Visualize Dijkstra Algorithm'})}> Visualize Dijkstra's Algorithm </button>
+            <button onClick = {()=> this.setState({visualizeIsSet : true, algorithmChosen : 'Visualize Depth First Algorithm'})} > Visualize Depth First</button>
+            <button onClick = {()=> this.setState({visualizeIsSet : true, algorithmChosen : 'Visualize Breadth Algorithm'})} > Visualize Breadth First</button>
+            <button onClick = {()=> this.setState({visualizeIsSet : true, algorithmChosen : 'Visualize AStar Algorithm'})}> Visualize AStar</button>
+            <button onClick = {()=> this.setState({visualizeIsSet : true, algorithmChosen : 'Generate Random Walls Algorithm'})}>Generate Random Walls</button>
+            <button onClick = {()=> this.setState({visualizeIsSet : true, algorithmChosen : 'Visualize Recursive BackTracking Algorithm'})}>Generate Recursive Maze</button>
             <div>
-                <button className = "buttonHome">Clear Paths</button>
-                <button className = "buttonHome">Clear Walls</button>
+                <button className = "buttonHome" onClick = {()=> this.clearPaths()}>Clear Paths</button>
+                <button className = "buttonHome" onClick = {()=> this.clearWalls(this.state.grid)}>Clear Walls</button>
+            </div>
+            <div>
+            <button className = "buttonHome" onClick = {()=> this.visualizeAlgorithms()}>{this.state.visualizeIsSet ? this.state.algorithmChosen : 'Chose Algorithm To Visualize'}</button>
             </div>
           </>
       );
