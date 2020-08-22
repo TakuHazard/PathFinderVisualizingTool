@@ -287,18 +287,12 @@ export default class PathfindingVisualizer extends Component {
                     );
                 })}
             </div>   
-            <button onClick = {()=> this.setState({visualizeIsSet : true, algorithmChosen : 'Visualize Dijkstra Algorithm'})}> Visualize Dijkstra's Algorithm </button>
-            <button onClick = {()=> this.setState({visualizeIsSet : true, algorithmChosen : 'Visualize Depth First Algorithm'})} > Visualize Depth First</button>
-            <button onClick = {()=> this.setState({visualizeIsSet : true, algorithmChosen : 'Visualize Breadth Algorithm'})} > Visualize Breadth First</button>
-            <button onClick = {()=> this.setState({visualizeIsSet : true, algorithmChosen : 'Visualize AStar Algorithm'})}> Visualize AStar</button>
-            <button onClick = {()=> this.setState({visualizeIsSet : true, algorithmChosen : 'Generate Random Walls Algorithm'})}>Generate Random Walls</button>
-            <button onClick = {()=> this.setState({visualizeIsSet : true, algorithmChosen : 'Visualize Recursive BackTracking Algorithm'})}>Generate Recursive Maze</button>
             <div>
                 <button className = "buttonHome" onClick = {()=> this.clearPaths()}>Clear Paths</button>
                 <button className = "buttonHome" onClick = {()=> this.clearWalls(this.state.grid)}>Clear Walls</button>
             </div>
             <div>
-            <button className = "buttonHome" onClick = {()=> this.visualizeAlgorithms()}>{this.state.visualizeIsSet ? this.state.algorithmChosen : 'Chose Algorithm To Visualize'}</button>
+            <button className = "buttonHome" onClick = {()=> this.visualizeAlgorithms()}>{this.state.visualizeIsSet ? this.state.algorithmChosen : 'Choose Algorithm To Visualize'}</button>
             </div>
           </>
       );
