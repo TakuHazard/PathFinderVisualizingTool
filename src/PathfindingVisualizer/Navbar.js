@@ -198,7 +198,7 @@ export function DropdownMenu() {
             <DropdownItem goToMenu= "main" leftIcon={<ArrowIcon />}>
               <h2>About</h2>
             </DropdownItem>
-            <p className = "about">This is a Minimalist PathFinder Visualizer and is dedicated to someone very special. Thank you for believing in me.</p>
+            <p className = "about">This is a Minimalist PathFinder Visualizer and is dedicated to someone very special. Thank you for believing in me, K.</p>
           </div>
         </CSSTransition>
 
