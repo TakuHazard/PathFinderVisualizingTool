@@ -7,6 +7,9 @@ import {aStar, getShortestPathAStar} from '../PathFindingAlgorithms/aStar';
 import {randomWalls} from '../MazeGenerationAlgorithms/randomWalls';
 
 import {createMaze, removeWalls, initializeEverything} from '../MazeGenerationAlgorithms/recursiveBackTracking';
+import {Navbar, NavItem, DropdownMenu} from './Navbar';
+import {ReactComponent as Caret} from '../icons/caret.svg';
+// import {dijkstra, getNodesInShortestPathOrder} from '.../icons/arrow.svg'
 
 import './PathfindingVisualizer.css';
 
@@ -216,7 +219,12 @@ export default class PathfindingVisualizer extends Component {
 
       return (
           <>
-           
+          <Navbar>
+              <NavItem icon = {<Caret />}> 
+                <DropdownMenu />
+              </NavItem>
+          </Navbar>
+            {/* <button onClick = {()=> this.visualizeDijkstra()}> Visualize Dijkstra's Algorithm </button> */}
             <div className = "grid">
                 {grid.map((row, rowIdx) => {
                     return(
@@ -250,6 +258,10 @@ export default class PathfindingVisualizer extends Component {
             <button onClick = {() => this. visualizeAStar() } > Visualize AStar</button>
             <button onClick = {()=> this.generateRandomWalls()}>Generate Random Walls</button>
             <button onClick = {() => this.generateRecursiveBackTrackingMaze()}>Generate Recursive Maze</button>
+            <div>
+                <button className = "buttonHome">Clear Paths</button>
+                <button className = "buttonHome">Clear Walls</button>
+            </div>
           </>
       );
     }
